@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agente SQL — Asistente para analistas de datos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:          #0B1120;
+      --navy-mid:      #162032;
+      --navy-border:   #243047;
+      --teal:          #0EBFB8;
+      --teal-dim:      rgba(14, 191, 184, 0.12);
+      --teal-glow:     rgba(14, 191, 184, 0.25);
+
+      --bg:            #F7F8FA;
+      --bg-card:       #FFFFFF;
+      --border:        #E3E7EF;
+      --border-strong: #CBD2DC;
+
+      --text:          #0D1523;
+      --text-muted:    #5C6A82;
+      --text-faint:    #8C98AB;
+
+      --answer-bg:     #F0FDF8;
+      --answer-border: #A7F3EB;
+      --answer-text:   #0A6056;
+
+      --code-bg:       #111827;
+      --code-text:     #D1FAF8;
+      --code-accent:   #67E8F9;
+      --code-keyword:  #A78BFA;
+
+      --tag-bg:        #EEF2FF;
+      --tag-text:      #4338CA;
+
+      --font-ui:       'Instrument Sans', sans-serif;
+      --font-heading:  'Syne', sans-serif;
+      --font-mono:     'JetBrains Mono', monospace;
+
+      --radius-sm:     6px;
+      --radius-md:     10px;
+      --radius-lg:     14px;
+      --radius-xl:     20px;
+
+      --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:     0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-card:   0 0 0 1px var(--border), var(--shadow-sm);
+    }
+
+    html { height: 100%; font-size: 16px; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .site-header {
+      background: var(--navy);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--navy-border);
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--teal-dim);
+      border: 1px solid var(--teal-glow);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--teal);
+    }
+
+    .brand-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-name span {
+      color: var(--teal);
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .api-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-faint);
+      background: var(--navy-mid);
+      border: 1px solid var(--navy-border);
+      border-radius: 100px;
+      padding: 4px 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .model-tag {
+      font-size: 0.7rem;
+      color: #7B8FA6;
+      font-family: var(--font-mono);
+      display: none;
+    }
+
+    .main-content {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .page-intro {
+      padding-bottom: 0.25rem;
+    }
+
+    .page-intro h1 {
+      font-family: var(--font-heading);
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      margin-bottom: 0.6rem;
+      background: linear-gradient(120deg, var(--text) 20%, #1a6b78 60%, var(--teal) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-intro p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      line-height: 1.6;
+    }
+
+    .query-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .query-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .query-input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: stretch;
+    }
+
+    #pregunta {
+      flex: 1;
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    #pregunta::placeholder {
+      color: var(--text-faint);
+    }
+
+    #pregunta:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-dim);
+    }
+
+    #btn-consultar {
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--navy);
+      background: var(--teal);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 0 1.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 2px 6px var(--teal-glow);
+      letter-spacing: -0.01em;
+    }
+
+    #btn-consultar:hover {
+      background: #0ADAD2;
+      box-shadow: 0 4px 12px var(--teal-glow);
+    }
+
+    #btn-consultar:active {
+      transform: scale(0.97);
+    }
+
+    #btn-consultar:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .query-hints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .hint-label {
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      flex-shrink: 0;
+    }
+
+    .hint-chip {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s, background 0.12s;
+    }
+
+    .hint-chip:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: var(--teal-dim);
+    }
+
+    .loading-bar {
+      display: none;
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--teal) 0%, transparent 100%);
+      animation: shimmer 1.2s linear infinite;
+      background-size: 200% 100%;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    #resultados {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .answer-card {
+      background: var(--answer-bg);
+      border: 1px solid var(--answer-border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .card-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--answer-text);
+    }
+
+    .card-label svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .attempts-badge {
+      font-size: 0.68rem;
+      font-weight: 500;
+      font-family: var(--font-mono);
+      color: var(--text-faint);
+      background: rgba(0,0,0,0.04);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 8px;
+    }
+
+    .answer-text {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--answer-text);
+      line-height: 1.55;
+    }
+
+    .answer-text strong {
+      font-weight: 700;
+      color: #065F52;
+    }
+
+    .sql-card {
+      background: var(--code-bg);
+      border: 1px solid #1F2D44;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .sql-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid #1F2D44;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+    }
+
+    .sql-card-header:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    .sql-card-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6B8EAE;
+    }
+
+    .sql-card-label svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .sql-toggle {
+      font-size: 0.7rem;
+      color: #4A6481;
+      font-family: var(--font-mono);
+      transition: color 0.12s;
+    }
+
+    .sql-card-header:hover .sql-toggle {
+      color: var(--code-accent);
+    }
+
+    .sql-body {
+      padding: 1rem 1.25rem 1.25rem;
+    }
+
+    pre.sql-code {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: var(--code-text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+    }
+
+    .kw { color: var(--code-keyword); font-weight: 500; }
+    .fn { color: #F472B6; }
+    .tb { color: var(--code-accent); }
+    .op { color: #94A3B8; }
+
+    .data-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .data-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-card-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .data-card-label svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .row-count {
+      font-size: 0.7rem;
+      font-weight: 500;
+      font-family: var(--font-mono);
+      color: var(--text-faint);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 8px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      transition: background 0.1s;
+    }
+
+    tbody tr:hover {
+      background: #F0F4F8;
+    }
+
+    tbody td {
+      padding: 0.65rem 1.25rem;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    td.num {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .table-empty {
+      padding: 2rem 1.25rem;
+      text-align: center;
+      color: var(--text-faint);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+
+    .error-card {
+      display: none;
+      background: #FFF1F2;
+      border: 1px solid #FECDD3;
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+    }
+
+    .error-card .card-label {
+      color: #BE123C;
+    }
+
+    .error-text {
+      font-size: 0.88rem;
+      color: #9F1239;
+      margin-top: 0.4rem;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+
+    .site-footer p {
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+    }
+
+    .site-footer a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    .historial-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .historial-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.1rem;
+    }
+
+    .historial-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .historial-clear {
+      font-size: 0.7rem;
+      color: var(--text-faint);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      transition: color 0.12s, background 0.12s;
+      font-family: var(--font-ui);
+    }
+
+    .historial-clear:hover {
+      color: var(--text-muted);
+      background: var(--border);
+    }
+
+    .historial-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+    }
+
+    .historial-item:hover {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-dim);
+      background: #FAFFFE;
+    }
+
+    .historial-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .historial-pregunta {
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .historial-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .historial-hora {
+      font-size: 0.68rem;
+      color: var(--text-faint);
+      font-family: var(--font-mono);
+    }
+
+    .historial-badge {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--text-faint);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 1px 6px;
+    }
+
+    .historial-preview {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0);   }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.22s ease-out both;
+    }
+
+    @media (max-width: 600px) {
+      .main-content    { padding: 1.5rem 1rem 3rem; }
+      .query-input-row { flex-direction: column; }
+      #btn-consultar   { padding: 0.75rem 1rem; }
+      .page-intro h1   { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+            <path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/>
+            <path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6"/>
+          </svg>
+        </div>
+        <span class="brand-name">Agente <span>SQL</span></span>
+      </div>
+
+      <div class="header-meta">
+        <div class="api-status" id="api-status">
+          <span class="status-dot"></span>
+          <span id="api-status-text">API lista</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-intro">
+      <h1>Consulta tu base de datos<br>en lenguaje natural</h1>
+      <p>Escribe una pregunta en español. El agente generará el SQL, lo ejecutará y te devolverá la respuesta.</p>
+    </div>
+
+    <div class="query-card">
+      <label class="query-label" for="pregunta">Tu pregunta</label>
+
+      <div class="query-input-row">
+        <input
+          type="text"
+          id="pregunta"
+          placeholder="Ej: ¿Qué usuarios han gastado más que el promedio?"
+          autocomplete="off"
+          maxlength="500"
+        >
+        <button id="btn-consultar" onclick="enviarPregunta()">
+          Consultar →
+        </button>
+      </div>
+
+      <div class="query-hints">
+        <span class="hint-label">Prueba:</span>
+        <span class="hint-chip" onclick="usarEjemplo(this)">¿Cuántos usuarios hay?</span>
+        <span class="hint-chip" onclick="usarEjemplo(this)">¿Cuál es el producto más caro?</span>
+        <span class="hint-chip" onclick="usarEjemplo(this)">¿Cuánto ha gastado cada usuario?</span>
+        <span class="hint-chip" onclick="usarEjemplo(this)">¿Qué productos no se han pedido?</span>
+      </div>
+
+      <div class="loading-bar" id="loading-bar"></div>
+    </div>
+
+    <div id="resultados">
+
+      <div class="error-card" id="error-card">
+        <div class="card-header">
+          <span class="card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Error
+          </span>
+        </div>
+        <p class="error-text" id="error-text">Descripción del error aquí.</p>
+      </div>
+
+      <div class="answer-card" id="answer-card">
+        <div class="card-header">
+          <span class="card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Respuesta
+          </span>
+          <span class="attempts-badge" id="attempts-badge">intento 1</span>
+        </div>
+
+        <p class="answer-text" id="answer-text">
+          Los usuarios que han gastado más que el promedio son
+          <strong>María López</strong> con un total de <strong>$1,079.98</strong>
+          y <strong>Carlos García</strong> con <strong>$1,059.97</strong>.
+          Ambos superan el gasto promedio de todos los usuarios registrados.
+        </p>
+      </div>
+
+      <div class="sql-card" id="sql-card">
+        <div class="sql-card-header" onclick="toggleSQL()">
+          <span class="sql-card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            SQL generado
+          </span>
+          <span class="sql-toggle" id="sql-toggle-label">▲ ocultar</span>
+        </div>
+
+        <div class="sql-body" id="sql-body">
+          <pre class="sql-code"><span class="kw">SELECT</span> u.id, u.name, <span class="fn">SUM</span>(o.total) <span class="kw">AS</span> total_gastado
+<span class="kw">FROM</span> <span class="tb">users</span> u
+<span class="kw">INNER JOIN</span> <span class="tb">orders</span> o <span class="kw">ON</span> u.id <span class="op">=</span> o.user_id
+<span class="kw">GROUP BY</span> u.id, u.name
+<span class="kw">HAVING</span> <span class="fn">SUM</span>(o.total) <span class="op">></span> (
+    <span class="kw">SELECT</span> <span class="fn">AVG</span>(user_total)
+    <span class="kw">FROM</span> (<span class="kw">SELECT</span> <span class="fn">SUM</span>(total) <span class="kw">AS</span> user_total
+          <span class="kw">FROM</span> <span class="tb">orders</span>
+          <span class="kw">GROUP BY</span> user_id) <span class="kw">AS</span> subq
+)</pre>
+        </div>
+      </div>
+
+      <div class="data-card" id="data-card">
+        <div class="data-card-header">
+          <span class="data-card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/>
+            </svg>
+            Datos
+          </span>
+          <span class="row-count" id="row-count">2 filas</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="results-table">
+            <thead>
+              <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>total_gastado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num">2</td>
+                <td>María López</td>
+                <td class="num">1079.98</td>
+              </tr>
+              <tr>
+                <td class="num">1</td>
+                <td>Carlos García</td>
+                <td class="num">1059.97</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <section class="historial-section" id="historial-section" style="display:none">
+      <div class="historial-header">
+        <span class="historial-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" style="width:11px;height:11px;margin-right:4px;vertical-align:middle">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Historial de sesión
+        </span>
+        <button class="historial-clear" onclick="limpiarHistorial()">Limpiar</button>
+      </div>
+      <div id="historial-lista"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      TFM — Agente conversacional para asistencia a analistas de datos ·
+      <a href="http://localhost:8000/docs" target="_blank">API Docs</a>
+    </p>
+  </footer>
+
+  <script>
+
+    const API_URL = 'http://localhost:8000';
+
+    const MAX_HISTORIAL = 8;
+    let   historial     = [];
+
+    (function inicializarUI() {
+      ocultarTodo();
+    })();
+
+    async function enviarPregunta() {
+      const input    = document.getElementById('pregunta');
+      const pregunta = input.value.trim();
+
+      if (!pregunta) {
+        input.focus();
+        input.style.borderColor = '#F87171';
+        input.style.boxShadow   = '0 0 0 3px rgba(248,113,113,0.2)';
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.style.boxShadow   = '';
+        }, 1500);
+        return;
+      }
+
+      mostrarCargando(true);
+      ocultarTodo();
+
+      try {
+        const response = await fetch(`${API_URL}/query`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ question: pregunta }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          const detalle = extraerDetalle(data, response.status);
+          mostrarError(detalle, response.status);
+          return;
+        }
+
+        mostrarRespuesta(data, pregunta);
+
+      } catch (err) {
+        if (err instanceof TypeError && err.message.includes('fetch')) {
+          mostrarError(
+            'No se puede conectar con la API. Verifica que el servidor FastAPI esté corriendo en localhost:8000.',
+            0
+          );
+        } else {
+          mostrarError(`Error inesperado: ${err.message}`, 0);
+        }
+
+      } finally {
+        mostrarCargando(false);
+      }
+    }
+
+    function mostrarCargando(activo) {
+      const btn   = document.getElementById('btn-consultar');
+      const bar   = document.getElementById('loading-bar');
+      const input = document.getElementById('pregunta');
+
+      if (activo) {
+        btn.disabled      = true;
+        btn.textContent   = 'Consultando…';
+        bar.style.display = 'block';
+        input.disabled    = true;
+      } else {
+        btn.disabled      = false;
+        btn.textContent   = 'Consultar →';
+        bar.style.display = 'none';
+        input.disabled    = false;
+        input.focus();
+      }
+    }
+
+    function ocultarTodo() {
+      document.getElementById('answer-card').style.display = 'none';
+      document.getElementById('sql-card').style.display    = 'none';
+      document.getElementById('data-card').style.display   = 'none';
+      document.getElementById('error-card').style.display  = 'none';
+    }
+
+    function mostrarRespuesta(data, pregunta) {
+      const answerEl = document.getElementById('answer-text');
+      answerEl.innerHTML = parsearMarkdown(data.answer || 'Sin respuesta.');
+
+      const badge = document.getElementById('attempts-badge');
+      const n = data.attempts || 1;
+      badge.textContent       = n === 1 ? 'intento 1' : `${n} intentos`;
+      badge.style.color       = n > 1 ? '#D97706' : '';
+      badge.style.borderColor = n > 1 ? '#FCD34D' : '';
+
+      document.getElementById('answer-card').style.display = '';
+
+      renderizarSQL(data.sql || '');
+      renderizarTabla(data.results || [], data.sql || '');
+
+      ['answer-card', 'sql-card', 'data-card'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el && el.style.display !== 'none') {
+          el.classList.remove('fade-in');
+          void el.offsetWidth;
+          el.style.animationDelay = `${i * 60}ms`;
+          el.classList.add('fade-in');
+        }
+      });
+
+      if (pregunta) agregarAlHistorial(pregunta, data);
+    }
+
+    function renderizarSQL(sql) {
+      if (!sql) return;
+
+      const card   = document.getElementById('sql-card');
+      const codeEl = document.querySelector('#sql-body pre.sql-code');
+      const body   = document.getElementById('sql-body');
+      const toggle = document.getElementById('sql-toggle-label');
+
+      codeEl.innerHTML   = colorearSQL(sql);
+      body.style.display = 'block';
+      toggle.textContent = '▲ ocultar';
+      card.style.display = '';
+    }
+
+    function colorearSQL(sqlRaw) {
+      const sql = sqlRaw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      const patterns = [
+        { re: /\bINNER\s+JOIN\b/gi,    cls: 'kw' },
+        { re: /\bLEFT\s+JOIN\b/gi,     cls: 'kw' },
+        { re: /\bRIGHT\s+JOIN\b/gi,    cls: 'kw' },
+        { re: /\bCROSS\s+JOIN\b/gi,    cls: 'kw' },
+        { re: /\bFULL\s+JOIN\b/gi,     cls: 'kw' },
+        { re: /\bGROUP\s+BY\b/gi,      cls: 'kw' },
+        { re: /\bORDER\s+BY\b/gi,      cls: 'kw' },
+        { re: /\bIS\s+NOT\s+NULL\b/gi, cls: 'kw' },
+        { re: /\bIS\s+NULL\b/gi,       cls: 'kw' },
+        { re: /\bNOT\s+IN\b/gi,        cls: 'kw' },
+        { re: /\bNOT\s+LIKE\b/gi,      cls: 'kw' },
+        { re: /\bCOUNT(?=\s*\()/gi,    cls: 'fn' },
+        { re: /\bSUM(?=\s*\()/gi,      cls: 'fn' },
+        { re: /\bAVG(?=\s*\()/gi,      cls: 'fn' },
+        { re: /\bMAX(?=\s*\()/gi,      cls: 'fn' },
+        { re: /\bMIN(?=\s*\()/gi,      cls: 'fn' },
+        { re: /\bCOALESCE(?=\s*\()/gi, cls: 'fn' },
+        { re: /\bROUND(?=\s*\()/gi,    cls: 'fn' },
+        { re: /\bLENGTH(?=\s*\()/gi,   cls: 'fn' },
+        { re: /\bCAST(?=\s*\()/gi,     cls: 'fn' },
+        { re: /\bTRIM(?=\s*\()/gi,     cls: 'fn' },
+        { re: /\bUPPER(?=\s*\()/gi,    cls: 'fn' },
+        { re: /\bLOWER(?=\s*\()/gi,    cls: 'fn' },
+        { re: /\bCONCAT(?=\s*\()/gi,   cls: 'fn' },
+        { re: /\bSELECT\b/gi,   cls: 'kw' },
+        { re: /\bFROM\b/gi,     cls: 'kw' },
+        { re: /\bWHERE\b/gi,    cls: 'kw' },
+        { re: /\bJOIN\b/gi,     cls: 'kw' },
+        { re: /\bON\b/gi,       cls: 'kw' },
+        { re: /\bAS\b/gi,       cls: 'kw' },
+        { re: /\bAND\b/gi,      cls: 'kw' },
+        { re: /\bOR\b/gi,       cls: 'kw' },
+        { re: /\bNOT\b/gi,      cls: 'kw' },
+        { re: /\bIN\b/gi,       cls: 'kw' },
+        { re: /\bLIKE\b/gi,     cls: 'kw' },
+        { re: /\bHAVING\b/gi,   cls: 'kw' },
+        { re: /\bLIMIT\b/gi,    cls: 'kw' },
+        { re: /\bOFFSET\b/gi,   cls: 'kw' },
+        { re: /\bDISTINCT\b/gi, cls: 'kw' },
+        { re: /\bWITH\b/gi,     cls: 'kw' },
+        { re: /\bCASE\b/gi,     cls: 'kw' },
+        { re: /\bWHEN\b/gi,     cls: 'kw' },
+        { re: /\bTHEN\b/gi,     cls: 'kw' },
+        { re: /\bELSE\b/gi,     cls: 'kw' },
+        { re: /\bEND\b/gi,      cls: 'kw' },
+        { re: /\bNULL\b/gi,     cls: 'kw' },
+        { re: /\bEXISTS\b/gi,   cls: 'kw' },
+        { re: /\bBETWEEN\b/gi,  cls: 'kw' },
+        { re: /\bUNION\b/gi,    cls: 'kw' },
+        { re: /\bALL\b/gi,      cls: 'kw' },
+      ];
+
+      const matches = [];
+      for (const { re, cls } of patterns) {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(sql)) !== null) {
+          matches.push({ start: m.index, end: m.index + m[0].length, text: m[0], cls });
+        }
+      }
+
+      matches.sort((a, b) => a.start - b.start || b.end - a.end);
+
+      const clean = [];
+      let cursor = 0;
+      for (const m of matches) {
+        if (m.start >= cursor) { clean.push(m); cursor = m.end; }
+      }
+
+      let result = '';
+      cursor = 0;
+      for (const m of clean) {
+        result += sql.slice(cursor, m.start);
+        result += `<span class="${m.cls}">${m.text.toUpperCase()}</span>`;
+        cursor = m.end;
+      }
+      result += sql.slice(cursor);
+      return result;
+    }
+
+    function renderizarTabla(results, sql) {
+      const card       = document.getElementById('data-card');
+      const table      = document.getElementById('results-table');
+      const rowCountEl = document.getElementById('row-count');
+
+      if (!results || results.length === 0) {
+        table.innerHTML = `
+          <tbody><tr>
+            <td class="table-empty" colspan="99">
+              La consulta no devolvió resultados.
+            </td>
+          </tr></tbody>`;
+        rowCountEl.textContent = '0 filas';
+        card.style.display = '';
+        return;
+      }
+
+      const filas   = results.map(r => Array.isArray(r) ? r : [r]);
+      const numCols = filas[0].length;
+
+      const colsSQL = extraerColumnas(sql);
+      const headers = Array.from({ length: numCols }, (_, i) =>
+        (colsSQL && colsSQL[i]) ? colsSQL[i] : `col_${i + 1}`
+      );
+
+      let html = '<thead><tr>';
+      for (const h of headers) html += `<th>${escapeHtml(h)}</th>`;
+      html += '</tr></thead><tbody>';
+
+      for (const fila of filas) {
+        html += '<tr>';
+        for (const cell of fila) {
+          const esNum = typeof cell === 'number' ||
+            (cell !== null && cell !== '' && !isNaN(Number(cell)));
+          const texto = cell === null
+            ? '<span style="color:var(--text-faint);font-style:italic">NULL</span>'
+            : escapeHtml(String(cell));
+          html += `<td class="${esNum ? 'num' : ''}">${texto}</td>`;
+        }
+        html += '</tr>';
+      }
+      html += '</tbody>';
+
+      table.innerHTML = html;
+
+      const n = filas.length;
+      rowCountEl.textContent = `${n} ${n === 1 ? 'fila' : 'filas'}`;
+      card.style.display = '';
+    }
+
+    function extraerColumnas(sql) {
+      if (!sql) return null;
+      const upper  = sql.toUpperCase();
+      const selIdx = upper.indexOf('SELECT');
+      if (selIdx === -1) return null;
+
+      let fromIdx = -1;
+      let depth   = 0;
+      for (let i = selIdx + 6; i < sql.length - 3; i++) {
+        if      (sql[i] === '(') depth++;
+        else if (sql[i] === ')') depth--;
+        else if (depth === 0 &&
+                 upper.slice(i, i + 4) === 'FROM' &&
+                 /[\s,]/.test(sql[i - 1] || ' ') &&
+                 /[\s(]/.test(sql[i + 4] || ' ')) {
+          fromIdx = i; break;
+        }
+      }
+      if (fromIdx === -1) return null;
+
+      const selectClause = sql.slice(selIdx + 6, fromIdx).trim();
+
+      const partes = [];
+      let actual = ''; depth = 0;
+      for (const ch of selectClause) {
+        if      (ch === '(') { depth++; actual += ch; }
+        else if (ch === ')') { depth--; actual += ch; }
+        else if (ch === ',' && depth === 0) { partes.push(actual.trim()); actual = ''; }
+        else actual += ch;
+      }
+      if (actual.trim()) partes.push(actual.trim());
+
+      return partes.map(parte => {
+        const asM = parte.match(/\bAS\s+(\w+)\s*$/i);
+        if (asM) return asM[1];
+        const dotM = parte.match(/\.(\w+)\s*$/);
+        if (dotM) return dotM[1];
+        const simpM = parte.match(/^(\w+)\s*$/);
+        if (simpM) return simpM[1];
+        return parte.replace(/\s+/g, ' ').slice(0, 30);
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function mostrarError(mensaje, status) {
+      const card  = document.getElementById('error-card');
+      const texto = document.getElementById('error-text');
+      const prefijo = status ? `[HTTP ${status}] ` : '';
+      texto.textContent = prefijo + mensaje;
+      card.style.display = '';
+    }
+
+    function parsearMarkdown(texto) {
+      const seguro = texto
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      return seguro.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    function extraerDetalle(data, status) {
+      if (!data || !data.detail) {
+        return `Error del servidor (HTTP ${status}).`;
+      }
+      if (typeof data.detail === 'string') {
+        return data.detail;
+      }
+      if (Array.isArray(data.detail)) {
+        return data.detail.map(e => e.msg || JSON.stringify(e)).join(' · ');
+      }
+      return JSON.stringify(data.detail);
+    }
+
+    function toggleSQL() {
+      const body    = document.getElementById('sql-body');
+      const label   = document.getElementById('sql-toggle-label');
+      const visible = body.style.display !== 'none';
+      body.style.display = visible ? 'none' : 'block';
+      label.textContent  = visible ? '▼ ver SQL' : '▲ ocultar';
+    }
+
+    function usarEjemplo(chip) {
+      const input = document.getElementById('pregunta');
+      input.value = chip.textContent;
+      input.focus();
+    }
+
+    function agregarAlHistorial(pregunta, data) {
+      const hora = new Date().toLocaleTimeString('es-ES', {
+        hour: '2-digit', minute: '2-digit'
+      });
+      historial.unshift({ pregunta, data, hora });
+      if (historial.length > MAX_HISTORIAL) historial.pop();
+      renderizarHistorial();
+    }
+
+    function renderizarHistorial() {
+      const section = document.getElementById('historial-section');
+      const lista   = document.getElementById('historial-lista');
+
+      if (historial.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = '';
+
+      lista.innerHTML = historial.map((entrada, idx) => {
+        const n          = entrada.data.attempts || 1;
+        const preview    = (entrada.data.answer || '')
+          .replace(/\*\*(.+?)\*\*/g, '$1')
+          .slice(0, 90) + (entrada.data.answer.length > 90 ? '…' : '');
+        const badgeColor = n > 1 ? 'color:#D97706;border-color:#FCD34D;' : '';
+
+        return `
+          <div class="historial-item" onclick="verDesdeHistorial(${idx})">
+            <div class="historial-item-top">
+              <span class="historial-pregunta">${escapeHtml(entrada.pregunta)}</span>
+              <div class="historial-meta">
+                <span class="historial-hora">${entrada.hora}</span>
+                <span class="historial-badge" style="${badgeColor}">
+                  ${n === 1 ? '1 intento' : n + ' intentos'}
+                </span>
+              </div>
+            </div>
+            <div class="historial-preview">${escapeHtml(preview)}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function verDesdeHistorial(idx) {
+      const entrada = historial[idx];
+      if (!entrada) return;
+
+      document.getElementById('pregunta').value = entrada.pregunta;
+      ocultarTodo();
+      mostrarRespuesta(entrada.data, null);
+
+      document.getElementById('resultados').scrollIntoView({
+        behavior: 'smooth', block: 'start'
+      });
+    }
+
+    function limpiarHistorial() {
+      historial = [];
+      renderizarHistorial();
+    }
+
+    document.getElementById('pregunta').addEventListener('keydown', e => {
+      if (e.key === 'Enter') enviarPregunta();
+    });
+
+  </script>
+
+</body>
+</html>

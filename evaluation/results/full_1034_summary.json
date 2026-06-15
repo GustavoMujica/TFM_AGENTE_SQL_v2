@@ -1,0 +1,44 @@
+{
+  "elapsed_s": 3611.9,
+  "ea_global": 73.02,
+  "correct": 755,
+  "total": 1034,
+  "pred_failed": 16,
+  "gold_errors": 0,
+  "avg_latency": 5.74,
+  "avg_attempts": 1.07,
+  "by_difficulty": {
+    "easy": {
+      "ea": 88.49,
+      "correct": 323,
+      "total": 365,
+      "pred_failed": 2,
+      "avg_latency": 5.44,
+      "avg_attempts": 1.04
+    },
+    "medium": {
+      "ea": 63.46,
+      "correct": 257,
+      "total": 405,
+      "pred_failed": 6,
+      "avg_latency": 5.74,
+      "avg_attempts": 1.07
+    },
+    "hard": {
+      "ea": 68.15,
+      "correct": 107,
+      "total": 157,
+      "pred_failed": 5,
+      "avg_latency": 6.0,
+      "avg_attempts": 1.1
+    },
+    "extra": {
+      "ea": 63.55,
+      "correct": 68,
+      "total": 107,
+      "pred_failed": 3,
+      "avg_latency": 6.39,
+      "avg_attempts": 1.11
+    }
+  }
+}

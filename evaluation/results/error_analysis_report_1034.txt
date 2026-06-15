@@ -1,0 +1,377 @@
+==================================================================
+  SEMANA 14 — FASE 8.1: Análisis de Errores (paso6_analyze_errors.py)
+  263 mismatches sobre 1034 queries
+  EA global: 74.56%
+==================================================================
+
+  DISTRIBUCIÓN POR CATEGORÍA DE ERROR
+  ──────────────────────────────────────────────────────────────────
+  Cat    Descripción                                  N       %  Barra
+  ──────────────────────────────────────────────────────────────────
+  A      Column selection                           114   43.3%  █████████████████████
+  D      Type / cast issue (TEXT fallback)           76   28.9%  ██████████████
+  C      Aggregation semantics                       49   18.6%  █████████
+  E      Schema / JOIN error                         18    6.8%  ███
+  B      Ordering / LIMIT                             6    2.3%  █
+  ──────────────────────────────────────────────────────────────────
+
+  DISTRIBUCIÓN POR NIVEL DE DIFICULTAD
+  ──────────────────────────────────────────────────────────────────
+  Nivel     Mismatches  Desglose
+  ──────────────────────────────────────────────────────────────────
+  easy              40  A:13  D:12  C:9  E:4  B:2
+  medium           142  A:83  D:39  C:9  E:10  B:1
+  hard              45  A:14  D:16  C:15
+  extra             36  A:4  D:9  C:16  E:4  B:3
+  ──────────────────────────────────────────────────────────────────
+
+  TOP DBs CON MÁS MISMATCHES
+  ──────────────────────────────────────────────────────────────────
+  car_1                                  53 mismatches   D:53
+  world_1                                47 mismatches   A:30  B:3  C:11  E:3
+  student_transcripts_tracking           29 mismatches   A:19  C:6  E:4
+  wta_1                                  23 mismatches   D:23
+  dog_kennels                            16 mismatches   A:6  B:3  C:4  E:3
+  tvshow                                 14 mismatches   A:5  C:8  E:1
+  pets_1                                 12 mismatches   A:8  C:3  E:1
+  cre_Doc_Template_Mgt                   12 mismatches   A:6  C:2  E:4
+  network_1                              10 mismatches   A:7  C:2  E:1
+  flight_2                                9 mismatches   A:6  C:2  E:1
+
+  ──────────────────────────────────────────────────────────────────
+  LISTA DETALLADA DE MISMATCHES
+  ──────────────────────────────────────────────────────────────────
+     ID  Nivel    DB                                Cat  Conf    att
+  ──────────────────────────────────────────────────────────────────
+     16  easy     concert_singer                    C    media   att=1
+     22  medium   concert_singer                    A    alta    att=1
+     23  medium   concert_singer                    A    alta    att=1
+     35  medium   concert_singer                    A    alta    att=1
+     36  medium   concert_singer                    A    alta    att=1
+     37  hard     concert_singer                    C    media   att=1
+     38  hard     concert_singer                    C    media   att=1
+     49  medium   pets_1                            A    baja    att=1
+     50  medium   pets_1                            A    baja    att=1
+     61  extra    pets_1                            C    media   att=1
+     62  extra    pets_1                            C    media   att=1
+     65  extra    pets_1                            C    media   att=1
+     66  extra    pets_1                            A    alta    att=1
+     71  medium   pets_1                            A    baja    att=1
+     72  medium   pets_1                            A    baja    att=1
+     73  medium   pets_1                            A    baja    att=1
+     74  medium   pets_1                            A    baja    att=1
+     79  medium   pets_1                            A    alta    att=1
+     80  medium   pets_1                            E    alta    att=1
+     94  medium   car_1                             D    alta    att=1
+     95  medium   car_1                             D    alta    att=1
+     96  medium   car_1                             D    alta    att=1
+     98  extra    car_1                             D    alta    att=1
+     99  hard     car_1                             D    alta    att=1
+    100  hard     car_1                             D    alta    att=1
+    102  extra    car_1                             D    alta    att=1
+    105  hard     car_1                             D    alta    att=1
+    106  hard     car_1                             D    alta    att=2
+    108  medium   car_1                             D    alta    att=1
+    109  medium   car_1                             D    alta    att=1
+    110  medium   car_1                             D    alta    att=1
+    111  medium   car_1                             D    alta    att=1
+    112  medium   car_1                             D    alta    att=1
+    113  medium   car_1                             D    alta    att=1
+    114  medium   car_1                             D    alta    att=1
+    115  hard     car_1                             D    alta    att=1
+    116  hard     car_1                             D    alta    att=1
+    121  easy     car_1                             D    alta    att=1
+    122  easy     car_1                             D    alta    att=1
+    123  hard     car_1                             D    alta    att=1
+    124  hard     car_1                             D    alta    att=1
+    125  easy     car_1                             D    alta    att=3
+    126  easy     car_1                             D    alta    att=3
+    127  medium   car_1                             D    alta    att=1
+    128  medium   car_1                             D    alta    att=1
+    131  medium   car_1                             D    alta    att=1
+    132  medium   car_1                             D    alta    att=1
+    133  medium   car_1                             D    alta    att=2
+    134  medium   car_1                             D    alta    att=2
+    135  easy     car_1                             D    alta    att=2
+    136  easy     car_1                             D    alta    att=2
+    138  medium   car_1                             D    alta    att=1
+    139  medium   car_1                             D    alta    att=1
+    140  medium   car_1                             D    alta    att=1
+    142  medium   car_1                             D    alta    att=1
+    148  medium   car_1                             D    alta    att=1
+    150  hard     car_1                             D    alta    att=1
+    151  hard     car_1                             D    alta    att=1
+    152  hard     car_1                             D    alta    att=1
+    158  medium   car_1                             D    alta    att=2
+    160  hard     car_1                             D    alta    att=1
+    161  hard     car_1                             D    alta    att=1
+    162  hard     car_1                             D    alta    att=1
+    166  medium   car_1                             D    alta    att=2
+    167  extra    car_1                             D    alta    att=2
+    169  medium   car_1                             D    alta    att=2
+    171  hard     car_1                             D    alta    att=1
+    172  hard     car_1                             D    alta    att=2
+    173  extra    car_1                             D    alta    att=1
+    174  extra    car_1                             D    alta    att=1
+    175  extra    car_1                             D    alta    att=1
+    176  extra    car_1                             D    alta    att=1
+    180  easy     flight_2                          C    baja    att=1
+    182  easy     flight_2                          C    baja    att=1
+    214  medium   flight_2                          A    baja    att=1
+    226  medium   flight_2                          E    alta    att=1
+    229  medium   flight_2                          A    alta    att=1
+    230  medium   flight_2                          A    baja    att=1
+    231  medium   flight_2                          A    alta    att=1
+    232  medium   flight_2                          A    alta    att=1
+    258  extra    flight_2                          A    alta    att=1
+    263  medium   employee_hire_evaluation          A    baja    att=1
+    264  medium   employee_hire_evaluation          A    baja    att=1
+    267  medium   employee_hire_evaluation          A    baja    att=1
+    268  medium   employee_hire_evaluation          A    baja    att=1
+    287  medium   employee_hire_evaluation          A    alta    att=1
+    288  medium   employee_hire_evaluation          A    alta    att=1
+    311  medium   cre_Doc_Template_Mgt              A    alta    att=1
+    312  medium   cre_Doc_Template_Mgt              A    alta    att=1
+    341  medium   cre_Doc_Template_Mgt              E    alta    att=2
+    342  medium   cre_Doc_Template_Mgt              E    alta    att=2
+    356  medium   cre_Doc_Template_Mgt              E    alta    att=1
+    361  easy     cre_Doc_Template_Mgt              C    baja    att=1
+    362  easy     cre_Doc_Template_Mgt              C    baja    att=1
+    367  medium   cre_Doc_Template_Mgt              E    alta    att=1
+    369  medium   cre_Doc_Template_Mgt              A    alta    att=1
+    370  medium   cre_Doc_Template_Mgt              A    alta    att=1
+    375  medium   cre_Doc_Template_Mgt              A    baja    att=1
+    376  medium   cre_Doc_Template_Mgt              A    baja    att=1
+    387  easy     course_teach                      C    media   att=1
+    388  easy     course_teach                      C    media   att=1
+    395  medium   course_teach                      A    baja    att=1
+    396  medium   course_teach                      A    baja    att=1
+    403  hard     course_teach                      C    baja    att=1
+    405  medium   course_teach                      A    alta    att=1
+    406  medium   course_teach                      A    alta    att=1
+    417  easy     museum_visit                      A    baja    att=1
+    419  hard     museum_visit                      C    baja    att=2
+    421  medium   museum_visit                      A    baja    att=1
+    448  extra    wta_1                             D    alta    att=1
+    452  extra    wta_1                             D    alta    att=1
+    453  easy     wta_1                             D    alta    att=1
+    454  easy     wta_1                             D    alta    att=1
+    456  easy     wta_1                             D    alta    att=1
+    458  easy     wta_1                             D    alta    att=1
+    459  medium   wta_1                             D    alta    att=1
+    460  medium   wta_1                             D    alta    att=1
+    462  medium   wta_1                             D    alta    att=1
+    469  medium   wta_1                             D    alta    att=1
+    470  medium   wta_1                             D    alta    att=1
+    471  medium   wta_1                             D    alta    att=1
+    472  medium   wta_1                             D    alta    att=1
+    473  medium   wta_1                             D    alta    att=1
+    474  medium   wta_1                             D    alta    att=1
+    479  medium   wta_1                             D    alta    att=1
+    480  medium   wta_1                             D    alta    att=1
+    481  medium   wta_1                             D    alta    att=1
+    482  medium   wta_1                             D    alta    att=1
+    483  easy     wta_1                             D    alta    att=1
+    484  easy     wta_1                             D    alta    att=1
+    489  medium   wta_1                             D    alta    att=1
+    490  medium   wta_1                             D    alta    att=1
+    493  easy     battle_death                      A    alta    att=1
+    496  medium   battle_death                      A    alta    att=1
+    500  medium   battle_death                      A    alta    att=1
+    515  medium   student_transcripts_tracking      A    alta    att=1
+    516  medium   student_transcripts_tracking      A    baja    att=1
+    520  easy     student_transcripts_tracking      A    alta    att=1
+    525  hard     student_transcripts_tracking      A    alta    att=1
+    526  hard     student_transcripts_tracking      A    alta    att=1
+    529  medium   student_transcripts_tracking      A    alta    att=1
+    530  medium   student_transcripts_tracking      A    alta    att=1
+    541  medium   student_transcripts_tracking      A    alta    att=1
+    542  medium   student_transcripts_tracking      A    alta    att=1
+    547  medium   student_transcripts_tracking      A    alta    att=1
+    548  medium   student_transcripts_tracking      A    alta    att=1
+    549  extra    student_transcripts_tracking      C    baja    att=1
+    550  extra    student_transcripts_tracking      C    baja    att=1
+    552  hard     student_transcripts_tracking      A    alta    att=1
+    554  medium   student_transcripts_tracking      C    baja    att=1
+    561  medium   student_transcripts_tracking      A    alta    att=1
+    563  easy     student_transcripts_tracking      E    alta    att=2
+    564  easy     student_transcripts_tracking      E    alta    att=2
+    571  medium   student_transcripts_tracking      A    alta    att=1
+    572  medium   student_transcripts_tracking      A    baja    att=1
+    573  medium   student_transcripts_tracking      A    alta    att=1
+    574  medium   student_transcripts_tracking      A    alta    att=1
+    575  extra    student_transcripts_tracking      E    alta    att=1
+    576  extra    student_transcripts_tracking      C    baja    att=1
+    578  easy     student_transcripts_tracking      E    alta    att=1
+    579  easy     student_transcripts_tracking      A    alta    att=1
+    581  easy     student_transcripts_tracking      A    alta    att=1
+    583  hard     student_transcripts_tracking      C    media   att=1
+    584  hard     student_transcripts_tracking      C    media   att=1
+    587  easy     tvshow                            A    alta    att=1
+    598  medium   tvshow                            A    alta    att=1
+    610  medium   tvshow                            C    baja    att=1
+    617  medium   tvshow                            A    baja    att=1
+    626  medium   tvshow                            E    alta    att=1
+    627  medium   tvshow                            A    baja    att=1
+    628  medium   tvshow                            A    baja    att=1
+    635  extra    tvshow                            C    media   att=2
+    636  extra    tvshow                            C    media   att=1
+    637  extra    tvshow                            C    media   att=1
+    641  medium   tvshow                            C    media   att=1
+    642  medium   tvshow                            C    baja    att=1
+    645  hard     tvshow                            C    media   att=1
+    646  hard     tvshow                            C    media   att=1
+    687  easy     voter_1                           A    alta    att=1
+    698  medium   voter_1                           A    baja    att=2
+    701  easy     voter_1                           C    media   att=1
+    704  easy     world_1                           A    baja    att=1
+    705  easy     world_1                           A    baja    att=1
+    716  easy     world_1                           A    baja    att=1
+    717  easy     world_1                           A    baja    att=1
+    724  medium   world_1                           A    baja    att=1
+    725  medium   world_1                           A    baja    att=1
+    731  medium   world_1                           A    baja    att=1
+    740  medium   world_1                           A    alta    att=1
+    741  medium   world_1                           A    alta    att=1
+    742  medium   world_1                           A    alta    att=1
+    743  medium   world_1                           A    alta    att=1
+    745  extra    world_1                           E    alta    att=1
+    754  extra    world_1                           C    baja    att=1
+    755  extra    world_1                           A    alta    att=1
+    756  medium   world_1                           C    media   att=1
+    758  hard     world_1                           A    alta    att=1
+    759  hard     world_1                           A    alta    att=1
+    760  medium   world_1                           A    alta    att=1
+    772  hard     world_1                           C    media   att=1
+    773  hard     world_1                           C    media   att=1
+    777  hard     world_1                           C    media   att=1
+    778  extra    world_1                           E    alta    att=1
+    779  extra    world_1                           E    alta    att=1
+    782  extra    world_1                           C    media   att=1
+    783  extra    world_1                           C    media   att=1
+    784  extra    world_1                           C    media   att=1
+    786  hard     world_1                           C    baja    att=1
+    788  easy     world_1                           B    alta    att=1
+    789  easy     world_1                           B    alta    att=1
+    790  easy     world_1                           A    baja    att=1
+    792  hard     world_1                           A    alta    att=1
+    793  hard     world_1                           A    alta    att=1
+    794  hard     world_1                           A    baja    att=1
+    795  hard     world_1                           A    baja    att=1
+    796  medium   world_1                           C    media   att=1
+    797  medium   world_1                           A    baja    att=1
+    798  medium   world_1                           A    baja    att=1
+    799  medium   world_1                           A    baja    att=1
+    810  medium   world_1                           A    baja    att=1
+    811  medium   world_1                           A    baja    att=1
+    812  medium   world_1                           A    alta    att=1
+    816  medium   world_1                           C    media   att=1
+    817  medium   world_1                           A    alta    att=1
+    818  medium   world_1                           A    alta    att=1
+    819  medium   world_1                           A    alta    att=1
+    820  medium   world_1                           B    alta    att=1
+    821  medium   world_1                           A    alta    att=1
+    832  medium   orchestra                         A    baja    att=2
+    833  medium   orchestra                         A    baja    att=2
+    844  medium   orchestra                         A    alta    att=1
+    845  medium   orchestra                         A    alta    att=1
+    850  medium   orchestra                         A    alta    att=1
+    851  medium   orchestra                         A    alta    att=1
+    866  easy     network_1                         C    media   att=1
+    867  easy     network_1                         A    alta    att=1
+    878  medium   network_1                         A    baja    att=1
+    879  medium   network_1                         A    baja    att=1
+    883  medium   network_1                         E    alta    att=1
+    884  medium   network_1                         A    alta    att=1
+    885  medium   network_1                         A    alta    att=1
+    906  medium   network_1                         A    baja    att=1
+    907  medium   network_1                         A    baja    att=1
+    908  hard     network_1                         C    baja    att=1
+    937  hard     dog_kennels                       A    alta    att=1
+    942  hard     dog_kennels                       A    alta    att=1
+    943  hard     dog_kennels                       A    alta    att=1
+    944  extra    dog_kennels                       C    media   att=1
+    945  extra    dog_kennels                       C    media   att=1
+    950  medium   dog_kennels                       E    alta    att=1
+    951  medium   dog_kennels                       E    alta    att=1
+    954  extra    dog_kennels                       A    baja    att=1
+    955  extra    dog_kennels                       B    media   att=1
+    960  extra    dog_kennels                       B    alta    att=1
+    961  extra    dog_kennels                       B    alta    att=1
+    980  hard     dog_kennels                       A    baja    att=1
+    981  hard     dog_kennels                       A    baja    att=1
+    996  easy     dog_kennels                       E    alta    att=1
+    998  hard     dog_kennels                       C    media   att=1
+    999  hard     dog_kennels                       C    media   att=1
+   1024  medium   singer                            C    media   att=1
+   1025  medium   singer                            C    media   att=1
+   1033  extra    real_estate_properties            C    media   att=1
+
+  EJEMPLOS REPRESENTATIVOS POR CATEGORÍA
+  ──────────────────────────────────────────────────────────────────
+  [A] Column selection
+    DB    : concert_singer (medium)
+    Q     : Show the stadium name and the number of concerts in each stadium.
+    Gold  : SELECT T2.name ,  count(*) FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_i
+    Pred  : SELECT s.name, COUNT(c.concert_id) AS number_of_concerts
+FROM stadium s
+LEFT JOI
+    Shapes: gold=[5, 2] pred=[9, 2]
+    Motivo: Gold usa SELECT *, pred selecciona columnas específicas
+
+  [D] Type / cast issue (TEXT fallback)
+    DB    : car_1 (medium)
+    Q     : What is the full name of each car maker, along with its id and how many models i
+    Gold  : SELECT T1.FullName ,  T1.Id ,  count(*) FROM CAR_MAKERS AS T1 JOIN MODEL_LIST AS
+    Pred  : SELECT cm.id, cm.fullname, COUNT(ml.modelid) AS model_count
+FROM car_makers cm
+L
+    Shapes: gold=[22, 3] pred=[22, 3]
+    Motivo: Columnas numéricas (horsepower, mpg, cylinders) almacenadas como TEXT en SQLite. Comparaci
+
+  [C] Aggregation semantics
+    DB    : concert_singer (easy)
+    Q     : What is the maximum capacity and the average of all stadiums ?
+    Gold  : select max(capacity), average from stadium
+    Pred  : SELECT MAX(capacity), AVG(capacity) FROM stadium;
+    Shapes: gold=[1, 2] pred=[1, 2]
+    Motivo: Funciones de agregación distintas: gold=['MAX'], pred=['AVG', 'MAX']
+
+  [E] Schema / JOIN error
+    DB    : pets_1 (medium)
+    Q     : For students who have pets , how many pets does each student have ? list their i
+    Gold  : select count(*) ,  t1.stuid from student as t1 join has_pet as t2 on t1.stuid  =
+    Pred  : SELECT stuid, COUNT(petid) FROM has_pet GROUP BY stuid;
+    Shapes: gold=[2, 2] pred=[2, 2]
+    Motivo: Tablas distintas entre gold y pred: ['STUDENT']
+
+  [B] Ordering / LIMIT
+    DB    : world_1 (easy)
+    Q     : What are the name, independence year, and surface area of the country with the s
+    Gold  : SELECT Name ,  SurfaceArea ,  IndepYear FROM country ORDER BY Population LIMIT 1
+    Pred  : SELECT name, indepyear, surfacearea 
+FROM country 
+WHERE population = (SELECT MI
+    Shapes: gold=[1, 3] pred=[7, 3]
+    Motivo: LIMIT presente solo en gold: gold_limit=True, pred_limit=False
+
+  ──────────────────────────────────────────────────────────────────
+  CONCLUSIONES PARA LA MEMORIA
+  ──────────────────────────────────────────────────────────────────
+
+  De los 263 mismatches:
+
+  • Tipo D (Type/cast) :  76 (28.9% si n>0) — Limitación de evaluación:
+      car_1 y wta_1 contienen columnas numéricas almacenadas como TEXT en
+      SQLite original. El agente genera SQL correcto semánticamente, pero la
+      conversión SQLite→PostgreSQL produce resultados distintos al gold.
+      No son errores del agente sino de la infraestructura de evaluación.
+
+  • Tipo A (Column sel.): 114 — Selección de columnas incorrecta.
+  • Tipo C (Aggregation):  49 — Estrategia de agregación distinta.
+  • Tipo E (Schema/JOIN):  18 — JOIN equivocado o tabla incorrecta.
+  • Tipo B (Order/LIMIT):   6 — Diferencia por LIMIT asimétrico.
+
+  ⚠️  EA ajustada sin Tipo D (infraestructura): 81.91%
+    
+==================================================================
